@@ -77,6 +77,7 @@ public class ProgramMenuBar extends JMenuBar {
 
         JMenuItem exitAcceptItem = new JMenuItem("Выход", KeyEvent.VK_X);
         exitAcceptItem.addActionListener((event) -> {
+            Logger.debug("Выход из приложения");
             SwingUtilities.invokeLater(() -> {
                 this.appFrame.dispatchEvent(new WindowEvent(this.appFrame, WindowEvent.WINDOW_CLOSING));
             });
