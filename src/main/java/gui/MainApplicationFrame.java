@@ -36,7 +36,7 @@ public class MainApplicationFrame extends JFrame {
         gameWindow.setSize(400, 400);
         addWindow(gameWindow);
 
-        setJMenuBar(generateMenuBar());
+        setJMenuBar(new ProgramMenuBar(this));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -68,18 +68,6 @@ public class MainApplicationFrame extends JFrame {
     protected void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
         frame.setVisible(true);
-    }
-
-    /**
-     * Генерирует меню.
-     * @return созданное меню
-     */
-    private JMenuBar generateMenuBar() {
-        MenuBar menuBar = new MenuBar(this);
-        menuBar.attachProgramMenu();
-        menuBar.attachLookAndFeelMenu();
-        menuBar.attachTestMenu();
-        return menuBar.getMenuBar();
     }
 
     /**

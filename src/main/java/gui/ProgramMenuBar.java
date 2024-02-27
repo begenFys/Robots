@@ -3,41 +3,31 @@ package gui;
 import log.Logger;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 /**
  * Представляет собой панель меню приложения.
  * Он содержит методы для добавления различных меню на панель.
  */
-public class MenuBar {
+public class ProgramMenuBar extends JMenuBar {
     private final MainApplicationFrame appFrame;
-    private final JMenuBar menuBar;
 
     /**
      * Конструктор класса MenuBar.
      *
      * @param appFrame фрейм приложения
      */
-    public MenuBar(MainApplicationFrame appFrame) {
-        this.menuBar = new JMenuBar();
+    public ProgramMenuBar(MainApplicationFrame appFrame) {
+        attachProgramMenu();
+        attachLookAndFeelMenu();
+        attachTestMenu();
         this.appFrame = appFrame;
-    }
-
-    /**
-     * Возвращает панель меню.
-     *
-     * @return панель меню
-     */
-    public JMenuBar getMenuBar() {
-        return menuBar;
     }
 
     /**
      * Добавляет меню "Режим отображения" на панель меню.
      */
-    public void attachLookAndFeelMenu() {
+    private void attachLookAndFeelMenu() {
         JMenu lookAndFeelMenu = new JMenu("Режим отображения");
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription("Управление режимом отображения приложения");
@@ -56,13 +46,13 @@ public class MenuBar {
         });
         lookAndFeelMenu.add(crossplatformLookAndFeel);
 
-        this.menuBar.add(lookAndFeelMenu);
+        this.add(lookAndFeelMenu);
     }
 
     /**
      * Добавляет меню "Тесты" на панель меню.
      */
-    public void attachTestMenu() {
+    private void attachTestMenu() {
         JMenu testMenu = new JMenu("Тесты");
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription("Тестовые команды");
@@ -73,13 +63,13 @@ public class MenuBar {
         });
         testMenu.add(addLogMessageItem);
 
-        this.menuBar.add(testMenu);
+        this.add(testMenu);
     }
 
     /**
      * Добавляет меню "Выход" на панель меню.
      */
-    public void attachProgramMenu() {
+    private void attachProgramMenu() {
         JMenu exitMenu = new JMenu("Robots");
         exitMenu.setMnemonic(KeyEvent.VK_X);
         exitMenu.getAccessibleContext().setAccessibleDescription("Выход из приложения");
@@ -97,7 +87,7 @@ public class MenuBar {
         exitMenu.add(exitAcceptItem);
         exitMenu.add(exitForceItem);
 
-        this.menuBar.add(exitMenu);
+        this.add(exitMenu);
     }
 
     /**
