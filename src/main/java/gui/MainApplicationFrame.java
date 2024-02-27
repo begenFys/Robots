@@ -68,69 +68,15 @@ public class MainApplicationFrame extends JFrame {
     }
 
     /**
-     * Генерирует меню для управления отображением и выполнения тестовых команд.
+     * Генерирует меню.
      * @return созданное меню
      */
     private JMenuBar generateMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-
-        JMenu lookAndFeelMenu = new JMenu("Режим отображения");
-        lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
-        lookAndFeelMenu.getAccessibleContext().setAccessibleDescription("Управление режимом отображения приложения");
-
-        JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
-        systemLookAndFeel.addActionListener((event) -> {
-            setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            this.invalidate();
-        });
-        lookAndFeelMenu.add(systemLookAndFeel);
-
-        JMenuItem crossplatformLookAndFeel = new JMenuItem("Универсальная схема", KeyEvent.VK_U);
-        crossplatformLookAndFeel.addActionListener((event) -> {
-            setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            this.invalidate();
-        });
-        lookAndFeelMenu.add(crossplatformLookAndFeel);
-
-        JMenu testMenu = new JMenu("Тесты");
-        testMenu.setMnemonic(KeyEvent.VK_T);
-        testMenu.getAccessibleContext().setAccessibleDescription("Тестовые команды");
-
-        JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
-        addLogMessageItem.addActionListener((event) -> {
-            Logger.debug("Новая строка");
-        });
-        testMenu.add(addLogMessageItem);
-
-        JMenu exitMenu = new JMenu("Выход");
-        exitMenu.setMnemonic(KeyEvent.VK_X);
-        exitMenu.getAccessibleContext().setAccessibleDescription("Выход из приложения");
-
-        JMenuItem exitAcceptItem = new JMenuItem("Выход", KeyEvent.VK_X);
-        exitAcceptItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int confirmed = JOptionPane.showConfirmDialog(null, "Вы уверены, что хотите выйти из приложения?",
-                        "Подтверждение выхода", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (confirmed == JOptionPane.YES_OPTION) {
-                    System.exit(0); // Закрытие приложения
-                }
-            }
-        });
-
-        JMenuItem exitForceItem = new JMenuItem("Принудительный выход", KeyEvent.VK_X);
-        exitForceItem.addActionListener((event) -> {
-            System.exit(0);
-        });
-
-        exitMenu.add(exitAcceptItem);
-        exitMenu.add(exitForceItem);
-
-        menuBar.add(lookAndFeelMenu);
-        menuBar.add(testMenu);
-        menuBar.add(exitMenu);
-
-        return menuBar;
+        MenuBar menuBar = new MenuBar(this);
+        menuBar.attachLookAndFeelMenu();
+        menuBar.attachTestMenu();
+        menuBar.attachExitMenu();
+        return menuBar.getMenuBar();
     }
 
     /**
