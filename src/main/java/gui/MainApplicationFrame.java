@@ -3,12 +3,15 @@ package gui;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -99,8 +102,33 @@ public class MainApplicationFrame extends JFrame {
         });
         testMenu.add(addLogMessageItem);
 
+        JMenu exitMenu = new JMenu("Выход");
+        exitMenu.setMnemonic(KeyEvent.VK_X);
+        exitMenu.getAccessibleContext().setAccessibleDescription("Выход из приложения");
+
+        JMenuItem exitAcceptItem = new JMenuItem("Выход", KeyEvent.VK_X);
+        exitAcceptItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int confirmed = JOptionPane.showConfirmDialog(null, "Вы уверены, что хотите выйти из приложения?",
+                        "Подтверждение выхода", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if (confirmed == JOptionPane.YES_OPTION) {
+                    System.exit(0); // Закрытие приложения
+                }
+            }
+        });
+
+        JMenuItem exitForceItem = new JMenuItem("Принудительный выход", KeyEvent.VK_X);
+        exitForceItem.addActionListener((event) -> {
+            System.exit(0);
+        });
+
+        exitMenu.add(exitAcceptItem);
+        exitMenu.add(exitForceItem);
+
         menuBar.add(lookAndFeelMenu);
         menuBar.add(testMenu);
+        menuBar.add(exitMenu);
 
         return menuBar;
     }
