@@ -4,6 +4,7 @@ import log.Logger;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 
 /**
  * Представляет собой панель меню приложения.
@@ -76,7 +77,9 @@ public class ProgramMenuBar extends JMenuBar {
 
         JMenuItem exitAcceptItem = new JMenuItem("Выход", KeyEvent.VK_X);
         exitAcceptItem.addActionListener((event) -> {
-            this.appFrame.confirmExit();
+            SwingUtilities.invokeLater(() -> {
+                this.appFrame.dispatchEvent(new WindowEvent(this.appFrame, WindowEvent.WINDOW_CLOSING));
+            });
         });
 
         JMenuItem exitForceItem = new JMenuItem("Принудительный выход", KeyEvent.VK_X);
