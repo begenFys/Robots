@@ -7,7 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+
 import log.Logger;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Locale;
@@ -20,6 +22,7 @@ public class MainApplicationFrame extends JFrame {
 
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru", "RU"));
+
     /**
      * Создает главное окно приложения.
      */
@@ -49,6 +52,7 @@ public class MainApplicationFrame extends JFrame {
 
     /**
      * Создает лог-окно.
+     *
      * @return созданное лог-окно
      */
     protected LogWindow createLogWindow() {
@@ -63,6 +67,7 @@ public class MainApplicationFrame extends JFrame {
 
     /**
      * Добавляет внутреннее окно на рабочую область.
+     *
      * @param frame внутреннее окно для добавления
      */
     protected void addWindow(JInternalFrame frame) {
