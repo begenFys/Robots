@@ -2,20 +2,16 @@ package gui;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import log.Logger;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Главное окно приложения с внутренними окнами и меню для управления отображением и выполнения тестовых команд.
@@ -23,7 +19,7 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame {
 
     private final JDesktopPane desktopPane = new JDesktopPane();
-
+    private final ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru", "RU"));
     /**
      * Создает главное окно приложения.
      */
@@ -41,7 +37,14 @@ public class MainApplicationFrame extends JFrame {
         addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                confirmExit();
+            }
+        });
+
     }
 
     /**
@@ -73,22 +76,29 @@ public class MainApplicationFrame extends JFrame {
      */
     private JMenuBar generateMenuBar() {
         MenuBar menuBar = new MenuBar(this);
+        menuBar.attachProgramMenu();
         menuBar.attachLookAndFeelMenu();
         menuBar.attachTestMenu();
-        menuBar.attachExitMenu();
         return menuBar.getMenuBar();
     }
 
     /**
-     * Устанавливает внешний вид приложения.
-     * @param className имя класса внешнего вида
+     * Подтверждает выход из приложения с помощью модульного окна.
      */
-    private void setLookAndFeel(String className) {
-        try {
-            UIManager.setLookAndFeel(className);
-            SwingUtilities.updateComponentTreeUI(this);
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            // just ignore
+    protected void confirmExit() {
+        Object[] choices = {bundle.getString("quit"), bundle.getString("cancel")};
+        Object defaultChoice = choices[0];
+        int confirmed = JOptionPane.showOptionDialog(null,
+                bundle.getString("quitQuestion"),
+                bundle.getString("quitTitle"),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                choices,
+                defaultChoice);
+
+        if (confirmed == JOptionPane.YES_OPTION) {
+            System.exit(0);
         }
     }
 }

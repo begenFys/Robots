@@ -79,20 +79,14 @@ public class MenuBar {
     /**
      * Добавляет меню "Выход" на панель меню.
      */
-    public void attachExitMenu() {
-        JMenu exitMenu = new JMenu("Выход");
+    public void attachProgramMenu() {
+        JMenu exitMenu = new JMenu("Robots");
         exitMenu.setMnemonic(KeyEvent.VK_X);
         exitMenu.getAccessibleContext().setAccessibleDescription("Выход из приложения");
 
         JMenuItem exitAcceptItem = new JMenuItem("Выход", KeyEvent.VK_X);
-        exitAcceptItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int confirmed = JOptionPane.showConfirmDialog(null, "Вы уверены, что хотите выйти из приложения?", "Подтверждение выхода", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if (confirmed == JOptionPane.YES_OPTION) {
-                    System.exit(0); // Закрытие приложения
-                }
-            }
+        exitAcceptItem.addActionListener((event) -> {
+            this.appFrame.confirmExit();
         });
 
         JMenuItem exitForceItem = new JMenuItem("Принудительный выход", KeyEvent.VK_X);
