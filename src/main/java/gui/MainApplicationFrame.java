@@ -5,9 +5,11 @@ import java.awt.Toolkit;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
-import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 
+import gui.components.ProgramMenuBar;
+import gui.windows.game.GameWindow;
+import gui.windows.log.LogWindow;
 import log.Logger;
 
 import java.awt.event.WindowAdapter;

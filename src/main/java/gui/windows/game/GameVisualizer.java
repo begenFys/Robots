@@ -1,4 +1,4 @@
-package gui;
+package gui.windows.game;
 
 import java.awt.Color;
 import java.awt.EventQueue;

@@ -1,4 +1,4 @@
-package gui;
+package gui.windows.game;
 
 import java.awt.BorderLayout;
 import javax.swing.JInternalFrame;
