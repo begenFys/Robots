@@ -34,12 +34,8 @@ public class MainApplicationFrame extends JFrame {
         setBounds(inset, inset, screenSize.width - inset * 2, screenSize.height - inset * 2);
         setContentPane(desktopPane);
 
-        LogWindow logWindow = createLogWindow();
-        addWindow(logWindow);
-
-        GameWindow gameWindow = new GameWindow();
-        gameWindow.setSize(400, 400);
-        addWindow(gameWindow);
+        addWindow(createLogWindow());
+        addWindow(createGameWindow());
 
         setJMenuBar(new ProgramMenuBar(this));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -65,6 +61,17 @@ public class MainApplicationFrame extends JFrame {
         logWindow.pack();
         Logger.debug("Протокол работает");
         return logWindow;
+    }
+
+    /**
+     * Создает окно игры.
+     *
+     * @return созданное окно игры
+     */
+    protected GameWindow createGameWindow() {
+        GameWindow gameWindow = new GameWindow();
+        gameWindow.setSize(400, 400);
+        return gameWindow;
     }
 
     /**
