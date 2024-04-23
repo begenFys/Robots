@@ -1,22 +1,20 @@
 package gui;
 
-import java.awt.*;
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JOptionPane;
-
+import exceptions.state.LoadException;
+import exceptions.state.SaveException;
 import gui.components.ProgramMenuBar;
 import gui.windows.game.GameWindow;
 import gui.windows.log.LogWindow;
 import log.Logger;
 import state.WindowState;
+import state.WindowStateManager;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.ResourceBundle;
+import java.util.List;
+import java.util.*;
 
 /**
  * Главное окно приложения с внутренними окнами и меню для управления отображением и выполнения тестовых команд.
@@ -27,9 +25,16 @@ public class MainApplicationFrame extends JFrame implements WindowState {
     private final ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru", "RU"));
 
     /**
+     * Контейнер для хранения ссылок на окна
+     */
+    private final List<Component> windows;
+
+    /**
      * Создает главное окно приложения.
      */
     public MainApplicationFrame() {
+        windows = new ArrayList<>();
+        
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset, screenSize.width - inset * 2, screenSize.height - inset * 2);
@@ -37,6 +42,8 @@ public class MainApplicationFrame extends JFrame implements WindowState {
 
         addWindow(createLogWindow());
         addWindow(createGameWindow());
+        
+        loadWindowStates();
 
         setJMenuBar(new ProgramMenuBar(this));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -46,7 +53,6 @@ public class MainApplicationFrame extends JFrame implements WindowState {
                 confirmExit();
             }
         });
-
     }
 
     /**
@@ -82,6 +88,7 @@ public class MainApplicationFrame extends JFrame implements WindowState {
      */
     protected void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
+        windows.add(frame);
         frame.setVisible(true);
     }
 
@@ -101,9 +108,59 @@ public class MainApplicationFrame extends JFrame implements WindowState {
                 defaultChoice);
 
         if (confirmed == JOptionPane.YES_OPTION) {
+            saveWindowStates();
             System.exit(0);
         }
     }
+
+    /**
+     * Сохраняем состояния окон.
+     */
+    private void saveWindowStates() {
+        WindowStateManager windowStateManager = new WindowStateManager();
+        windowStateManager.saveWindowState(this);
+        for (Component component : windows) {
+            if (component instanceof WindowState)
+                windowStateManager.saveWindowState((WindowState) component);
+        }
+
+        try {
+            windowStateManager.save();
+        } catch (SaveException e) {
+            System.err.println("Не удалось сохранить окна");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Загружаем состояние окон, если это возможно
+     */
+    private void loadWindowStates() {
+        WindowStateManager windowStateManager = new WindowStateManager();
+        try {
+            windowStateManager.load();
+        } catch (LoadException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        try {
+            windowStateManager.loadWindowState(this);
+        } catch (LoadException e) {
+            e.printStackTrace();
+        }
+
+        for (Component component : windows) {
+            if (component instanceof WindowState) {
+                try {
+                    windowStateManager.loadWindowState((WindowState) component);
+                } catch (LoadException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 
     @Override
     public String getPrefix() {

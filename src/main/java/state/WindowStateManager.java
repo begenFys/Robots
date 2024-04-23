@@ -62,9 +62,12 @@ public class WindowStateManager {
      *
      * @param windowState Имплементация WindowState(в нашем случае окна)
      */
-    public void loadWindowState(WindowState windowState) {
+    public void loadWindowState(WindowState windowState) throws LoadException {
         if (windowStates.containsKey(windowState.getPrefix())) {
             windowState.setProperties(windowStates.get(windowState.getPrefix()));
+        } else {
+            System.err.printf("Нет данных для загрузки окна %s%n", windowState.getPrefix());
+            return;
         }
     }
 
