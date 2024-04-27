@@ -1,13 +1,12 @@
 package gui.windows.log;
 
-import java.awt.*;
-import java.util.Properties;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
 import log.LogChangeListener;
 import log.LogEntry;
 import log.LogWindowSource;
 import state.WindowState;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Внутреннее окно для отображения логов.
@@ -28,6 +27,9 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Wind
         m_logContent.setSize(200, 500);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_logContent, BorderLayout.CENTER);
+        panel.setLocation(10, 10);
+        panel.setSize(300, 800);
+        setMinimumSize(panel.getSize());
         getContentPane().add(panel);
         pack();
         updateLogContent();
@@ -53,28 +55,5 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Wind
     @Override
     public String getPrefix() {
         return "log";
-    }
-
-    @Override
-    public Properties getProperties() {
-        Properties props = new Properties();
-        Dimension size = this.getSize();
-        Point location = this.getLocation();
-        props.setProperty("width", String.valueOf(size.width));
-        props.setProperty("height", String.valueOf(size.height));
-        props.setProperty("x", String.valueOf(location.x));
-        props.setProperty("y", String.valueOf(location.y));
-        return props;
-    }
-
-    @Override
-    public void setProperties(Properties properties) {
-        int width = Integer.parseInt(properties.getProperty("width"));
-        int height = Integer.parseInt(properties.getProperty("height"));
-        int x = Integer.parseInt(properties.getProperty("x"));
-        int y = Integer.parseInt(properties.getProperty("y"));
-
-        this.setLocation(x, y);
-        this.setSize(width, height);
     }
 }

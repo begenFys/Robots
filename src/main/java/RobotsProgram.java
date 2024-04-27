@@ -1,9 +1,7 @@
 import gui.MainApplicationFrame;
 
-import java.awt.Frame;
-
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
+import java.awt.*;
 
 public class RobotsProgram {
     public static void main(String[] args) {

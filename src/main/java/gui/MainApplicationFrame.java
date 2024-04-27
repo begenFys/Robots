@@ -38,10 +38,11 @@ public class MainApplicationFrame extends JFrame implements WindowState {
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset, screenSize.width - inset * 2, screenSize.height - inset * 2);
-        setContentPane(desktopPane);
+        setContentPane(desktopPane); // TODO: add getContentPane
 
-        addWindow(createLogWindow());
-        addWindow(createGameWindow());
+        addWindow(new LogWindow(Logger.getDefaultLogSource()));
+        Logger.debug("Протокол работает");
+        addWindow(new GameWindow());
         
         loadWindowStates();
 
@@ -56,39 +57,13 @@ public class MainApplicationFrame extends JFrame implements WindowState {
     }
 
     /**
-     * Создает лог-окно.
-     *
-     * @return созданное лог-окно
-     */
-    protected LogWindow createLogWindow() {
-        LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-        logWindow.setLocation(10, 10);
-        logWindow.setSize(300, 800);
-        setMinimumSize(logWindow.getSize());
-        logWindow.pack();
-        Logger.debug("Протокол работает");
-        return logWindow;
-    }
-
-    /**
-     * Создает окно игры.
-     *
-     * @return созданное окно игры
-     */
-    protected GameWindow createGameWindow() {
-        GameWindow gameWindow = new GameWindow();
-        gameWindow.setSize(400, 400);
-        return gameWindow;
-    }
-
-    /**
      * Добавляет внутреннее окно на рабочую область.
      *
      * @param frame внутреннее окно для добавления
      */
     protected void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
-        windows.add(frame);
+        windows.add(frame); // FIXME: delete
         frame.setVisible(true);
     }
 
@@ -119,7 +94,7 @@ public class MainApplicationFrame extends JFrame implements WindowState {
     private void saveWindowStates() {
         WindowStateManager windowStateManager = new WindowStateManager();
         windowStateManager.saveWindowState(this);
-        for (Component component : windows) {
+        for (Component component : getContentPane().getComponents()) {
             if (component instanceof WindowState)
                 windowStateManager.saveWindowState((WindowState) component);
         }
@@ -165,28 +140,5 @@ public class MainApplicationFrame extends JFrame implements WindowState {
     @Override
     public String getPrefix() {
         return "main";
-    }
-
-    @Override
-    public Properties getProperties() {
-        Properties props = new Properties();
-        Dimension size = this.getSize();
-        Point location = this.getLocation();
-        props.setProperty("width", String.valueOf(size.width));
-        props.setProperty("height", String.valueOf(size.height));
-        props.setProperty("x", String.valueOf(location.x));
-        props.setProperty("y", String.valueOf(location.y));
-        return props;
-    }
-
-    @Override
-    public void setProperties(Properties properties) {
-        int width = Integer.parseInt(properties.getProperty("width"));
-        int height = Integer.parseInt(properties.getProperty("height"));
-        int x = Integer.parseInt(properties.getProperty("x"));
-        int y = Integer.parseInt(properties.getProperty("y"));
-
-        this.setLocation(x, y);
-        this.setSize(width, height);
     }
 }

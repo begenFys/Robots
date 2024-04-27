@@ -5,6 +5,8 @@ import exceptions.state.LoadException;
 import exceptions.state.SaveException;
 import org.apache.commons.io.FileUtils;
 
+import java.awt.*;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +19,7 @@ public class WindowStateManager {
     /**
      * Файл, куда сохраняются конфигурации окон.
      */
-    private File configLocation;
+    private final File configLocation;
     /**
      * Map для хранения состояний окон.
      */
@@ -41,33 +43,38 @@ public class WindowStateManager {
         this.configLocation = configLocation;
     }
 
-    public void setConfigLocation(File location) {
-        configLocation = location;
-    }
-
-    public File getConfigLocation() {
-        return configLocation;
-    }
-
     /**
      * Сохранение параметров имплементации WindowState
-     * @param windowState Имплементация WindowState(в нашем случае окна)
+     * @param window Component, который реализует интерфейс WindowState
      */
-    public void saveWindowState(WindowState windowState) {
-        windowStates.put(windowState.getPrefix(), windowState.getProperties());
+    public void saveWindowState(WindowState window) {
+        Properties props = new Properties();
+        Dimension size = ((Component) window).getSize();
+        Point location = ((Component) window).getLocation();
+        props.setProperty("width", String.valueOf(size.width));
+        props.setProperty("height", String.valueOf(size.height));
+        props.setProperty("x", String.valueOf(location.x));
+        props.setProperty("y", String.valueOf(location.y));
+        windowStates.put(window.getPrefix(), props);
     }
 
     /**
      * Установка параметров для имплементации WindowState
      *
-     * @param windowState Имплементация WindowState(в нашем случае окна)
+     * @param window Имплементация WindowState(в нашем случае окна)
      */
-    public void loadWindowState(WindowState windowState) throws LoadException {
-        if (windowStates.containsKey(windowState.getPrefix())) {
-            windowState.setProperties(windowStates.get(windowState.getPrefix()));
+    public void loadWindowState(WindowState window) throws LoadException {
+        if (windowStates.containsKey(window.getPrefix())) {
+            Properties props = windowStates.get(window.getPrefix());
+            int width = Integer.parseInt(props.getProperty("width"));
+            int height = Integer.parseInt(props.getProperty("height"));
+            int x = Integer.parseInt(props.getProperty("x"));
+            int y = Integer.parseInt(props.getProperty("y"));
+
+            ((Component) window).setLocation(x, y);
+            ((Component) window).setSize(width, height);
         } else {
-            System.err.printf("Нет данных для загрузки окна %s%n", windowState.getPrefix());
-            return;
+            System.err.printf("Нет данных для загрузки окна %s\n", window.getPrefix());
         }
     }
 
