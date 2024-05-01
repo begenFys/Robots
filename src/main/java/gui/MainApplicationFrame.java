@@ -13,8 +13,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.List;
-import java.util.*;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Главное окно приложения с внутренними окнами и меню для управления отображением и выполнения тестовых команд.
@@ -25,20 +25,13 @@ public class MainApplicationFrame extends JFrame implements WindowState {
     private final ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru", "RU"));
 
     /**
-     * Контейнер для хранения ссылок на окна
-     */
-    private final List<Component> windows;
-
-    /**
      * Создает главное окно приложения.
      */
     public MainApplicationFrame() {
-        windows = new ArrayList<>();
-        
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset, screenSize.width - inset * 2, screenSize.height - inset * 2);
-        setContentPane(desktopPane); // TODO: add getContentPane
+        setContentPane(desktopPane);
 
         addWindow(new LogWindow(Logger.getDefaultLogSource()));
         Logger.debug("Протокол работает");
@@ -63,7 +56,6 @@ public class MainApplicationFrame extends JFrame implements WindowState {
      */
     protected void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
-        windows.add(frame); // FIXME: delete
         frame.setVisible(true);
     }
 
@@ -125,7 +117,7 @@ public class MainApplicationFrame extends JFrame implements WindowState {
             e.printStackTrace();
         }
 
-        for (Component component : windows) {
+        for (Component component : getContentPane().getComponents()) {
             if (component instanceof WindowState) {
                 try {
                     windowStateManager.loadWindowState((WindowState) component);
