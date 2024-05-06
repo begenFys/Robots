@@ -1,15 +1,16 @@
 package gui;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-
+import exceptions.state.LoadException;
+import exceptions.state.SaveException;
+import gui.components.ProgramMenuBar;
+import gui.windows.game.GameWindow;
+import gui.windows.log.LogWindow;
 import log.Logger;
+import state.WindowState;
+import state.WindowStateManager;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Locale;
@@ -18,7 +19,7 @@ import java.util.ResourceBundle;
 /**
  * Главное окно приложения с внутренними окнами и меню для управления отображением и выполнения тестовых команд.
  */
-public class MainApplicationFrame extends JFrame {
+public class MainApplicationFrame extends JFrame implements WindowState {
 
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final ResourceBundle bundle = ResourceBundle.getBundle("messages", new Locale("ru", "RU"));
@@ -32,12 +33,17 @@ public class MainApplicationFrame extends JFrame {
         setBounds(inset, inset, screenSize.width - inset * 2, screenSize.height - inset * 2);
         setContentPane(desktopPane);
 
-        LogWindow logWindow = createLogWindow();
-        addWindow(logWindow);
+        addWindow(new LogWindow(Logger.getDefaultLogSource()));
+        Logger.debug("Протокол работает");
+        addWindow(new GameWindow());
 
-        GameWindow gameWindow = new GameWindow();
-        gameWindow.setSize(400, 400);
-        addWindow(gameWindow);
+        WindowStateManager windowStateManager = new WindowStateManager(this);
+        try {
+            windowStateManager.load();
+        } catch (LoadException e) {
+            System.err.println("Не удалось загрузить состояния окон");
+            e.printStackTrace();
+        }
 
         setJMenuBar(new ProgramMenuBar(this));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -47,22 +53,6 @@ public class MainApplicationFrame extends JFrame {
                 confirmExit();
             }
         });
-
-    }
-
-    /**
-     * Создает лог-окно.
-     *
-     * @return созданное лог-окно
-     */
-    protected LogWindow createLogWindow() {
-        LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-        logWindow.setLocation(10, 10);
-        logWindow.setSize(300, 800);
-        setMinimumSize(logWindow.getSize());
-        logWindow.pack();
-        Logger.debug("Протокол работает");
-        return logWindow;
     }
 
     /**
@@ -91,7 +81,19 @@ public class MainApplicationFrame extends JFrame {
                 defaultChoice);
 
         if (confirmed == JOptionPane.YES_OPTION) {
+            WindowStateManager windowStateManager = new WindowStateManager(this);
+            try {
+                windowStateManager.save();
+            } catch (SaveException e) {
+                System.err.println("Не удалось сохранить состояния окон");
+                e.printStackTrace();
+            }
             System.exit(0);
         }
+    }
+
+    @Override
+    public String getPrefix() {
+        return "main";
     }
 }

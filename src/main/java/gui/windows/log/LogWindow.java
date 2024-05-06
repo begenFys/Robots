@@ -1,18 +1,17 @@
-package gui;
+package gui.windows.log;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.awt.TextArea;
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
 import log.LogChangeListener;
 import log.LogEntry;
 import log.LogWindowSource;
+import state.WindowState;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Внутреннее окно для отображения логов.
  */
-public class LogWindow extends JInternalFrame implements LogChangeListener {
+public class LogWindow extends JInternalFrame implements LogChangeListener, WindowState {
     private LogWindowSource m_logSource;
     private TextArea m_logContent;
 
@@ -28,6 +27,9 @@ public class LogWindow extends JInternalFrame implements LogChangeListener {
         m_logContent.setSize(200, 500);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_logContent, BorderLayout.CENTER);
+        panel.setLocation(10, 10);
+        panel.setSize(300, 800);
+        setMinimumSize(panel.getSize());
         getContentPane().add(panel);
         pack();
         updateLogContent();
@@ -48,5 +50,10 @@ public class LogWindow extends JInternalFrame implements LogChangeListener {
     @Override
     public void onLogChanged() {
         EventQueue.invokeLater(this::updateLogContent);
+    }
+
+    @Override
+    public String getPrefix() {
+        return "log";
     }
 }
