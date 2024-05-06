@@ -36,8 +36,14 @@ public class MainApplicationFrame extends JFrame implements WindowState {
         addWindow(new LogWindow(Logger.getDefaultLogSource()));
         Logger.debug("Протокол работает");
         addWindow(new GameWindow());
-        
-        loadWindowStates();
+
+        WindowStateManager windowStateManager = new WindowStateManager(this);
+        try {
+            windowStateManager.load();
+        } catch (LoadException e) {
+            System.err.println("Не удалось загрузить состояния окон");
+            e.printStackTrace();
+        }
 
         setJMenuBar(new ProgramMenuBar(this));
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -75,59 +81,16 @@ public class MainApplicationFrame extends JFrame implements WindowState {
                 defaultChoice);
 
         if (confirmed == JOptionPane.YES_OPTION) {
-            saveWindowStates();
+            WindowStateManager windowStateManager = new WindowStateManager(this);
+            try {
+                windowStateManager.save();
+            } catch (SaveException e) {
+                System.err.println("Не удалось сохранить состояния окон");
+                e.printStackTrace();
+            }
             System.exit(0);
         }
     }
-
-    /**
-     * Сохраняем состояния окон.
-     */
-    private void saveWindowStates() {
-        WindowStateManager windowStateManager = new WindowStateManager();
-        windowStateManager.saveWindowState(this);
-        for (Component component : getContentPane().getComponents()) {
-            if (component instanceof WindowState)
-                windowStateManager.saveWindowState((WindowState) component);
-        }
-
-        try {
-            windowStateManager.save();
-        } catch (SaveException e) {
-            System.err.println("Не удалось сохранить окна");
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Загружаем состояние окон, если это возможно
-     */
-    private void loadWindowStates() {
-        WindowStateManager windowStateManager = new WindowStateManager();
-        try {
-            windowStateManager.load();
-        } catch (LoadException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        try {
-            windowStateManager.loadWindowState(this);
-        } catch (LoadException e) {
-            e.printStackTrace();
-        }
-
-        for (Component component : getContentPane().getComponents()) {
-            if (component instanceof WindowState) {
-                try {
-                    windowStateManager.loadWindowState((WindowState) component);
-                } catch (LoadException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
 
     @Override
     public String getPrefix() {

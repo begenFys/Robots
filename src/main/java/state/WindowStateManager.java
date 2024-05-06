@@ -5,8 +5,8 @@ import exceptions.state.LoadException;
 import exceptions.state.SaveException;
 import org.apache.commons.io.FileUtils;
 
+import javax.swing.*;
 import java.awt.*;
-
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,14 +21,15 @@ public class WindowStateManager {
      */
     private final File configLocation;
     /**
-     * Map для хранения состояний окон.
+     * Ссылка на контейнер окон
      */
-    private Map<String, Properties> windowStates = new HashMap<>();
+    private final JFrame parentFrame;
 
     /**
      * Устанавливает путь по умолчанию для сохранения конфига
      */
-    public WindowStateManager() {
+    public WindowStateManager(JFrame parentFrame) {
+        this.parentFrame = parentFrame;
         configLocation = new File(
                 System.getProperty("user.home") +
                         File.separator + "Robots" +
@@ -39,15 +40,16 @@ public class WindowStateManager {
     /**
      * Устанавливает кастомный путь для сохранения конфига
      */
-    public WindowStateManager(File configLocation) {
+    public WindowStateManager(File configLocation, JFrame parentFrame) {
         this.configLocation = configLocation;
+        this.parentFrame = parentFrame;
     }
 
     /**
-     * Сохранение параметров имплементации WindowState
+     * Получение параметров имплементации WindowState
      * @param window Component, который реализует интерфейс WindowState
      */
-    public void saveWindowState(WindowState window) {
+    public Properties getProperties(WindowState window) {
         Properties props = new Properties();
         Dimension size = ((Component) window).getSize();
         Point location = ((Component) window).getLocation();
@@ -55,7 +57,7 @@ public class WindowStateManager {
         props.setProperty("height", String.valueOf(size.height));
         props.setProperty("x", String.valueOf(location.x));
         props.setProperty("y", String.valueOf(location.y));
-        windowStates.put(window.getPrefix(), props);
+        return props;
     }
 
     /**
@@ -63,23 +65,18 @@ public class WindowStateManager {
      *
      * @param window Имплементация WindowState(в нашем случае окна)
      */
-    public void loadWindowState(WindowState window) throws LoadException {
-        if (windowStates.containsKey(window.getPrefix())) {
-            Properties props = windowStates.get(window.getPrefix());
-            int width = Integer.parseInt(props.getProperty("width"));
-            int height = Integer.parseInt(props.getProperty("height"));
-            int x = Integer.parseInt(props.getProperty("x"));
-            int y = Integer.parseInt(props.getProperty("y"));
+    public void setProperties(WindowState window, Properties props) {
+        int width = Integer.parseInt(props.getProperty("width"));
+        int height = Integer.parseInt(props.getProperty("height"));
+        int x = Integer.parseInt(props.getProperty("x"));
+        int y = Integer.parseInt(props.getProperty("y"));
 
-            ((Component) window).setLocation(x, y);
-            ((Component) window).setSize(width, height);
-        } else {
-            System.err.printf("Нет данных для загрузки окна %s\n", window.getPrefix());
-        }
+        ((Component) window).setLocation(x, y);
+        ((Component) window).setSize(width, height);
     }
 
     /**
-     * Сохранение HashMap в файл конфига
+     * Сохранение состояний в файл конфига
      */
     public void save() throws SaveException {
         try {
@@ -96,6 +93,15 @@ public class WindowStateManager {
 
         try (OutputStream os = new FileOutputStream(configLocation);
              ObjectOutputStream oos = new ObjectOutputStream(new BufferedOutputStream(os))) {
+            Map<String, Properties> windowStates = new HashMap<>();
+            if (parentFrame instanceof WindowState) {
+                windowStates.put(((WindowState) parentFrame).getPrefix(), getProperties((WindowState) parentFrame));
+            }
+            for (Component component : parentFrame.getContentPane().getComponents()) {
+                if (component instanceof WindowState) {
+                    windowStates.put(((WindowState) component).getPrefix(), getProperties((WindowState) component));
+                }
+            }
             oos.writeObject(windowStates);
         } catch (FileNotFoundException e) {
             throw new SaveException("Не удалось создать поток вывода. Файл конфига не найден");
@@ -112,7 +118,15 @@ public class WindowStateManager {
             InputStream is = new FileInputStream(configLocation);
             ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(is));
             try {
-                windowStates = (HashMap<String, Properties>) ois.readObject();
+                Map<String, Properties> windowStates = (HashMap<String, Properties>) ois.readObject();
+                if (parentFrame instanceof WindowState) {
+                    setProperties((WindowState) parentFrame, windowStates.get(((WindowState) parentFrame).getPrefix()));
+                }
+                for (Component component : parentFrame.getContentPane().getComponents()) {
+                    if (component instanceof WindowState) {
+                        setProperties((WindowState) component, windowStates.get(((WindowState) component).getPrefix()));
+                    }
+                }
             } catch (ClassNotFoundException e) {
                 throw new LoadException("Не удалось прочитать файл. класс hashmap не нашелся.");
             } finally {
