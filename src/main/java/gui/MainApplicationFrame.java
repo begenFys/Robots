@@ -4,6 +4,7 @@ import exceptions.state.LoadException;
 import exceptions.state.SaveException;
 import gui.components.ProgramMenuBar;
 import gui.windows.game.GameWindow;
+import gui.windows.game.CoordinateWindow;
 import gui.windows.log.LogWindow;
 import log.Logger;
 import model.GameModel;
@@ -39,6 +40,9 @@ public class MainApplicationFrame extends JFrame implements WindowState {
 
         GameModel gameModel = new GameModel();
         addWindow(new GameWindow(gameModel));
+
+        CoordinateWindow coordinateWindow = new CoordinateWindow(gameModel);
+        addWindow(coordinateWindow);
 
         WindowStateManager windowStateManager = new WindowStateManager(this);
         try {
