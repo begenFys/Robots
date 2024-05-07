@@ -1,5 +1,6 @@
 package gui.windows.game;
 
+import model.GameModel;
 import state.WindowState;
 
 import javax.swing.*;
@@ -14,9 +15,9 @@ public class GameWindow extends JInternalFrame implements WindowState {
     /**
      * Создает новое игровое окно.
      */
-    public GameWindow() {
+    public GameWindow(GameModel model) {
         super("Игровое поле", true, true, true, true);
-        m_visualizer = new GameVisualizer();
+        m_visualizer = new GameVisualizer(model);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
         panel.setSize(400, 400);

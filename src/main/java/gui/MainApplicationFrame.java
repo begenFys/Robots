@@ -6,6 +6,7 @@ import gui.components.ProgramMenuBar;
 import gui.windows.game.GameWindow;
 import gui.windows.log.LogWindow;
 import log.Logger;
+import model.GameModel;
 import state.WindowState;
 import state.WindowStateManager;
 
@@ -35,7 +36,9 @@ public class MainApplicationFrame extends JFrame implements WindowState {
 
         addWindow(new LogWindow(Logger.getDefaultLogSource()));
         Logger.debug("Протокол работает");
-        addWindow(new GameWindow());
+
+        GameModel gameModel = new GameModel();
+        addWindow(new GameWindow(gameModel));
 
         WindowStateManager windowStateManager = new WindowStateManager(this);
         try {
