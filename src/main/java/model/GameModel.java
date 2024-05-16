@@ -67,12 +67,12 @@ public class GameModel {
             newY = mRobotPositionY + velocity * duration * Math.sin(mRobotDirection);
         }
         double newDirection = asNormalizedRadians(mRobotDirection + angularVelocity * duration);
-        support.firePropertyChange("robotPositionX", mTargetPositionX, newX);
-        support.firePropertyChange("robotPositionY", mTargetPositionY, newY);
-        support.firePropertyChange("robotDirection", mRobotDirection, newDirection);
+        RobotState oldState = new RobotState(mRobotPositionX, mRobotPositionY, mRobotDirection);
+        RobotState newState = new RobotState(newX, newY, newDirection);
         mRobotPositionX = newX;
         mRobotPositionY = newY;
         mRobotDirection = newDirection;
+        support.firePropertyChange("robotState", oldState, newState);
     }
 
     /**
