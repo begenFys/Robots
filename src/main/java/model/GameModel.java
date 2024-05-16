@@ -32,9 +32,9 @@ public class GameModel {
      * @param p точка, представляющая новую целевую позицию
      */
     public void setTargetPosition(Point p) {
-        support.firePropertyChange("targetPosition", new Point(m_targetPositionX, m_targetPositionY), p);
         m_targetPositionX = p.x;
         m_targetPositionY = p.y;
+        support.firePropertyChange("targetPosition", new Point(m_targetPositionX, m_targetPositionY), p);
     }
 
     /**
