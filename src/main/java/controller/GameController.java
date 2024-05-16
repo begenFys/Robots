@@ -10,15 +10,15 @@ import java.util.TimerTask;
  * Класс контролера для управления моделью
  */
 public class GameController {
-    private final GameModel m_model;
-    private final Timer m_timer = new Timer("events generator", true);
+    private final GameModel mModel;
+    private final Timer mTimer = new Timer("events generator", true);
 
     public GameController(GameModel model) {
-        m_model = model;
-        m_timer.schedule(new TimerTask() {
+        mModel = model;
+        mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                m_model.updateRobot();
+                mModel.updateRobot();
             }
         }, 0, 10);
     }
@@ -30,6 +30,6 @@ public class GameController {
      * @param point - новая позиция
      */
     public void setTargetPosition(Point point) {
-        m_model.setTargetPosition(point);
+        mModel.setTargetPosition(point);
     }
 }

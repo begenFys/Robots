@@ -12,8 +12,8 @@ import java.awt.*;
  * Внутреннее окно для отображения логов.
  */
 public class LogWindow extends JInternalFrame implements LogChangeListener, WindowState {
-    private LogWindowSource m_logSource;
-    private TextArea m_logContent;
+    private LogWindowSource mLogSource;
+    private TextArea mLogContent;
 
     /**
      * Создает новое окно логов.
@@ -21,12 +21,12 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Wind
      */
     public LogWindow(LogWindowSource logSource) {
         super("Логи", true, true, true, true);
-        m_logSource = logSource;
-        m_logSource.registerListener(this);
-        m_logContent = new TextArea("");
-        m_logContent.setSize(200, 500);
+        mLogSource = logSource;
+        mLogSource.registerListener(this);
+        mLogContent = new TextArea("");
+        mLogContent.setSize(200, 500);
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(m_logContent, BorderLayout.CENTER);
+        panel.add(mLogContent, BorderLayout.CENTER);
         panel.setLocation(10, 10);
         panel.setSize(300, 800);
         setMinimumSize(panel.getSize());
@@ -40,11 +40,11 @@ public class LogWindow extends JInternalFrame implements LogChangeListener, Wind
      */
     private void updateLogContent() {
         StringBuilder content = new StringBuilder();
-        for (LogEntry entry : m_logSource.all()) {
+        for (LogEntry entry : mLogSource.all()) {
             content.append(entry.getMessage()).append("\n");
         }
-        m_logContent.setText(content.toString());
-        m_logContent.invalidate();
+        mLogContent.setText(content.toString());
+        mLogContent.invalidate();
     }
 
     @Override

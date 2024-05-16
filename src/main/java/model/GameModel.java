@@ -9,13 +9,13 @@ import java.beans.PropertyChangeSupport;
  * Считает все движения и координаты робота
  */
 public class GameModel {
-    private volatile double m_robotPositionX = 100;
-    private volatile double m_robotPositionY = 100;
-    private volatile double m_robotDirection = 0;
+    private volatile double mRobotPositionX = 100;
+    private volatile double mRobotPositionY = 100;
+    private volatile double mRobotDirection = 0;
 
 
-    private volatile int m_targetPositionX = 150;
-    private volatile int m_targetPositionY = 100;
+    private volatile int mTargetPositionX = 150;
+    private volatile int mTargetPositionY = 100;
 
     private static final double maxVelocity = 0.1;
     private static final double maxAngularVelocity = 0.001;
@@ -32,47 +32,47 @@ public class GameModel {
      * @param p точка, представляющая новую целевую позицию
      */
     public void setTargetPosition(Point p) {
-        m_targetPositionX = p.x;
-        m_targetPositionY = p.y;
-        support.firePropertyChange("targetPosition", new Point(m_targetPositionX, m_targetPositionY), p);
+        mTargetPositionX = p.x;
+        mTargetPositionY = p.y;
+        support.firePropertyChange("targetPosition", new Point(mTargetPositionX, mTargetPositionY), p);
     }
 
     /**
      * Считаем следующие координаты и изменяют позицию робота
      */
     public void updateRobot() {
-        double distance = distance(m_targetPositionX, m_targetPositionY,
-                m_robotPositionX, m_robotPositionY);
+        double distance = distance(mTargetPositionX, mTargetPositionY,
+                mRobotPositionX, mRobotPositionY);
         if (distance < 0.5) {
             return;
         }
         double velocity = maxVelocity;
-        double angleToTarget = angleTo(m_robotPositionX, m_robotPositionY, m_targetPositionX, m_targetPositionY);
-        double angleDifference = asNormalizedRadians(angleToTarget - m_robotDirection);
+        double angleToTarget = angleTo(mRobotPositionX, mRobotPositionY, mTargetPositionX, mTargetPositionY);
+        double angleDifference = asNormalizedRadians(angleToTarget - mRobotDirection);
         double angularVelocity = (angleDifference < Math.PI) ? maxAngularVelocity : -maxAngularVelocity;
         velocity = applyLimits(velocity, 0, maxVelocity);
         angularVelocity = applyLimits(angularVelocity, -maxAngularVelocity, maxAngularVelocity);
         int duration = 10;
-        double newX = m_robotPositionX + velocity / angularVelocity *
-                (Math.sin(m_robotDirection + angularVelocity * duration) - Math.sin(m_robotDirection));
+        double newX = mRobotPositionX + velocity / angularVelocity *
+                (Math.sin(mRobotDirection + angularVelocity * duration) - Math.sin(mRobotDirection));
 
         if (!Double.isFinite(newX)) {
-            newX = m_robotPositionX + velocity * duration * Math.cos(m_robotDirection);
+            newX = mRobotPositionX + velocity * duration * Math.cos(mRobotDirection);
         }
 
-        double newY = m_robotPositionY - velocity / angularVelocity *
-                (Math.cos(m_robotDirection + angularVelocity * duration) - Math.cos(m_robotDirection));
+        double newY = mRobotPositionY - velocity / angularVelocity *
+                (Math.cos(mRobotDirection + angularVelocity * duration) - Math.cos(mRobotDirection));
 
         if (!Double.isFinite(newY)) {
-            newY = m_robotPositionY + velocity * duration * Math.sin(m_robotDirection);
+            newY = mRobotPositionY + velocity * duration * Math.sin(mRobotDirection);
         }
-        double newDirection = asNormalizedRadians(m_robotDirection + angularVelocity * duration);
-        support.firePropertyChange("robotPositionX", m_targetPositionX, newX);
-        support.firePropertyChange("robotPositionY", m_targetPositionY, newY);
-        support.firePropertyChange("robotDirection", m_robotDirection, newDirection);
-        m_robotPositionX = newX;
-        m_robotPositionY = newY;
-        m_robotDirection = newDirection;
+        double newDirection = asNormalizedRadians(mRobotDirection + angularVelocity * duration);
+        support.firePropertyChange("robotPositionX", mTargetPositionX, newX);
+        support.firePropertyChange("robotPositionY", mTargetPositionY, newY);
+        support.firePropertyChange("robotDirection", mRobotDirection, newDirection);
+        mRobotPositionX = newX;
+        mRobotPositionY = newY;
+        mRobotDirection = newDirection;
     }
 
     /**
@@ -137,22 +137,22 @@ public class GameModel {
     }
 
     public double getRobotPositionX() {
-        return m_robotPositionX;
+        return mRobotPositionX;
     }
 
     public double getRobotPositionY() {
-        return m_robotPositionY;
+        return mRobotPositionY;
     }
 
     public double getRobotDirection() {
-        return m_robotDirection;
+        return mRobotDirection;
     }
 
     public int getTargetPositionX() {
-        return m_targetPositionX;
+        return mTargetPositionX;
     }
 
     public int getTargetPositionY() {
-        return m_targetPositionY;
+        return mTargetPositionY;
     }
 }

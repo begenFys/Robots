@@ -16,15 +16,15 @@ import java.beans.PropertyChangeListener;
  */
 public class GameVisualizer extends JPanel implements PropertyChangeListener {
     private final GameModel model;
-    private final GameController m_controller;
+    private final GameController mController;
 
     public GameVisualizer(GameModel model) {
         this.model = model;
-        m_controller = new GameController(model);
+        mController = new GameController(model);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                m_controller.setTargetPosition(e.getPoint());
+                mController.setTargetPosition(e.getPoint());
             }
         });
         setDoubleBuffered(true);
