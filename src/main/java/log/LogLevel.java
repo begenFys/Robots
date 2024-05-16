@@ -8,14 +8,14 @@ public enum LogLevel {
     Error(4),
     Fatal(5);
 
-    private int m_iLevel;
+    private int mILevel;
 
     private LogLevel(int iLevel) {
-        m_iLevel = iLevel;
+        mILevel = iLevel;
     }
 
     public int level() {
-        return m_iLevel;
+        return mILevel;
     }
 }
 

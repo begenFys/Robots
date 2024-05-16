@@ -124,7 +124,10 @@ public class WindowStateManager {
                 }
                 for (Component component : parentFrame.getContentPane().getComponents()) {
                     if (component instanceof WindowState) {
-                        setProperties((WindowState) component, windowStates.get(((WindowState) component).getPrefix()));
+                        String prefix = ((WindowState) component).getPrefix();
+                        if (windowStates.containsKey(prefix)) {
+                            setProperties((WindowState) component, windowStates.get(prefix));
+                        }
                     }
                 }
             } catch (ClassNotFoundException e) {

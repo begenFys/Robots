@@ -7,19 +7,19 @@ import java.util.Collections;
  * Источник данных для лога, который хранит и управляет сообщениями лога.
  */
 public class LogWindowSource {
-    private int m_iQueueLength;
-    private ArrayList<LogEntry> m_messages;
-    private final ArrayList<LogChangeListener> m_listeners;
-    private volatile LogChangeListener[] m_activeListeners;
+    private int mIQueueLength;
+    private ArrayList<LogEntry> mMessages;
+    private final ArrayList<LogChangeListener> mListeners;
+    private volatile LogChangeListener[] mActiveListeners;
 
     /**
      * Создает новый источник данных для лога с указанной длиной очереди сообщений.
      * @param iQueueLength максимальная длина очереди сообщений
      */
     public LogWindowSource(int iQueueLength) {
-        m_iQueueLength = iQueueLength;
-        m_messages = new ArrayList<LogEntry>(iQueueLength);
-        m_listeners = new ArrayList<LogChangeListener>();
+        mIQueueLength = iQueueLength;
+        mMessages = new ArrayList<LogEntry>(iQueueLength);
+        mListeners = new ArrayList<LogChangeListener>();
     }
 
     /**
@@ -27,9 +27,9 @@ public class LogWindowSource {
      * @param listener слушатель для регистрации
      */
     public void registerListener(LogChangeListener listener) {
-        synchronized (m_listeners) {
-            m_listeners.add(listener);
-            m_activeListeners = null;
+        synchronized (mListeners) {
+            mListeners.add(listener);
+            mActiveListeners = null;
         }
     }
 
@@ -38,9 +38,9 @@ public class LogWindowSource {
      * @param listener слушатель для отмены регистрации
      */
     public void unregisterListener(LogChangeListener listener) {
-        synchronized (m_listeners) {
-            m_listeners.remove(listener);
-            m_activeListeners = null;
+        synchronized (mListeners) {
+            mListeners.remove(listener);
+            mActiveListeners = null;
         }
     }
 
@@ -51,13 +51,13 @@ public class LogWindowSource {
      */
     public void append(LogLevel logLevel, String strMessage) {
         LogEntry entry = new LogEntry(logLevel, strMessage);
-        m_messages.add(entry);
-        LogChangeListener[] activeListeners = m_activeListeners;
+        mMessages.add(entry);
+        LogChangeListener[] activeListeners = mActiveListeners;
         if (activeListeners == null) {
-            synchronized (m_listeners) {
-                if (m_activeListeners == null) {
-                    activeListeners = m_listeners.toArray(new LogChangeListener[0]);
-                    m_activeListeners = activeListeners;
+            synchronized (mListeners) {
+                if (mActiveListeners == null) {
+                    activeListeners = mListeners.toArray(new LogChangeListener[0]);
+                    mActiveListeners = activeListeners;
                 }
             }
         }
@@ -71,7 +71,7 @@ public class LogWindowSource {
      * @return количество сообщений в логе
      */
     public int size() {
-        return m_messages.size();
+        return mMessages.size();
     }
 
     /**
@@ -81,11 +81,11 @@ public class LogWindowSource {
      * @return диапазон сообщений из лога
      */
     public Iterable<LogEntry> range(int startFrom, int count) {
-        if (startFrom < 0 || startFrom >= m_messages.size()) {
+        if (startFrom < 0 || startFrom >= mMessages.size()) {
             return Collections.emptyList();
         }
-        int indexTo = Math.min(startFrom + count, m_messages.size());
-        return m_messages.subList(startFrom, indexTo);
+        int indexTo = Math.min(startFrom + count, mMessages.size());
+        return mMessages.subList(startFrom, indexTo);
     }
 
     /**
@@ -93,6 +93,6 @@ public class LogWindowSource {
      * @return все сообщения из лога
      */
     public Iterable<LogEntry> all() {
-        return m_messages;
+        return mMessages;
     }
 }
